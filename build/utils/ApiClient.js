@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 export class ApiClient {
     baseUrl;
     defaultHeaders;
@@ -44,4 +46,10 @@ export class ApiClient {
         });
     }
 }
-export const apiClient = new ApiClient("https://ideas.ideascale.com", "1ed29a06-1283-4ccc-83b9-53d61f19a57d");
+if (!process.env.WORKSPACE_URL) {
+    throw new Error("WORKSPACE_URL environment variable is not set");
+}
+if (!process.env.API_TOKEN) {
+    throw new Error("API_TOKEN environment variable is not set");
+}
+export const apiClient = new ApiClient(process.env.WORKSPACE_URL, process.env.API_TOKEN);

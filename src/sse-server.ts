@@ -1,14 +1,16 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import type {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {SSEServerTransport} from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 
 export function createSSEServer(mcpServer: McpServer) {
+
     const app = express();
 
     const transportMap = new Map<string, SSEServerTransport>();
 
     app.get("/sse", async (req, res) => {
         const transport = new SSEServerTransport("/messages", res);
+        console.log("=====Raw Headers====", req.originalUrl);
         transportMap.set(transport.sessionId, transport);
         await mcpServer.connect(transport);
     });
@@ -17,7 +19,7 @@ export function createSSEServer(mcpServer: McpServer) {
         const sessionId = req.query.sessionId as string;
         if (!sessionId) {
             console.error('Message received without sessionId');
-            res.status(400).json({ error: 'sessionId is required' });
+            res.status(400).json({error: 'sessionId is required'});
             return;
         }
 
