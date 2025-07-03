@@ -14,9 +14,10 @@ export function createSSEServer() {
         const queryString = req.originalUrl.split('?')[1];
         const params = new URLSearchParams(queryString);
         const workspaceUrl = params.get('WORKSPACE_URL');
-        const apiToken = params.get('API_TOKEN');
+        const apiToken = req.headers.api_token as string;
 
         if (!workspaceUrl || !apiToken) {
+            console.error("Missing WORKSPACE_URL or API_TOKEN")
             res.status(400).json({error: 'Missing WORKSPACE_URL or API_TOKEN'});
             return;
         }
