@@ -1,18 +1,12 @@
-import dotenv from 'dotenv'
-
-dotenv.config()
-
 type RequestOptions = {
     method?: string;
     headers?: Record<string, string>;
     body?: any;
 };
 
-const WORKSPACE_URL = "https://ideas.ideascale.com"
-const API_TOKEN = ""
-
 export class ApiClient {
     private defaultHeaders: Record<string, string>;
+    private API_PATH_PREFIX = "/a/rest/v1";
 
     constructor(
         private baseUrl: string,
@@ -25,7 +19,7 @@ export class ApiClient {
     }
 
     async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T | null> {
-        const url = this.baseUrl + endpoint;
+        const url = this.baseUrl + this.API_PATH_PREFIX + endpoint;
 
         const headers = {
             ...this.defaultHeaders,
@@ -33,6 +27,7 @@ export class ApiClient {
         };
 
         try {
+            console.log("Making request to:", url);
             const response = await fetch(url, {
                 method: options.method ?? "GET",
                 headers,
@@ -65,5 +60,3 @@ export class ApiClient {
         });
     }
 }
-
-export const apiClient = new ApiClient(WORKSPACE_URL, API_TOKEN);

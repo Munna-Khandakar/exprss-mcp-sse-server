@@ -1,98 +1,72 @@
-import {McpServer, ResourceTemplate} from "@modelcontextprotocol/sdk/server/mcp.js";
-import {apiClient} from "./utils/ApiClient.js";
+import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {ApiClient} from "./utils/ApiClient.js";
 import {Idea} from "./types/Idea.js";
-import {formatIdea, formatMember} from "./utils/FormatResponse.js";
 import {User} from "./types/User.js";
+import {formatIdea, formatMember} from "./utils/FormatResponse.js";
 
-const mcpServer = new McpServer({
-    name: "ideascale-mcp-server",
-    version: "1.0.0"
-}, {
-    capabilities: {},
-});
+export function createMcpServer(baseUrl: string, token: string) {
+    const apiClient = new ApiClient(baseUrl, token);
 
-mcpServer.tool(
-    "get_ideas",
-    "Get Ideas from the IdeaScale",
-    async () => {
-        const ideas = await apiClient.get<Idea[]>("/a/rest/v1/ideas");
+    const mcpServer = new McpServer({
+        name: "ideascale-mcp-server",
+        version: "1.0.0",
+    });
 
-        if (!ideas) {
+    mcpServer.tool(
+        "get_ideas",
+        "Get Ideas from the IdeaScale",
+        async () => {
+            const ideas = await apiClient.get<Idea[]>("/ideas");
+            if (!ideas || ideas.length === 0) {
+                return {
+                    content: [
+                        {
+                            type: "text",
+                            text: ideas ? "No ideas found." : "Failed to retrieve data.",
+                        },
+                    ],
+                };
+            }
+
+            const formattedIdeas = ideas.map(formatIdea);
             return {
                 content: [
                     {
                         type: "text",
-                        text: "Failed to retrieve data.",
+                        text: `Ideas from the response:\n\n${formattedIdeas.join("\n")}`,
                     },
                 ],
             };
         }
+    );
 
-        if (ideas.length === 0) {
+    mcpServer.tool(
+        "get_members",
+        "Get all members information",
+        async () => {
+            const members = await apiClient.get<User[]>("/members");
+            if (!members || members.length === 0) {
+                return {
+                    content: [
+                        {
+                            type: "text",
+                            text: members ? "No members found." : "Failed to retrieve data.",
+                        },
+                    ],
+                };
+            }
+
+            const formattedMembers = members.map(formatMember);
             return {
                 content: [
                     {
                         type: "text",
-                        text: "No ideas found.",
+                        text: `Members from the response:\n\n${formattedMembers.join("\n")}`,
                     },
                 ],
             };
         }
+    );
 
-        const formattedIdeas = ideas.map(formatIdea);
-        const ideasIntoText = `Ideas from the response:\n\n${formattedIdeas.join("\n")}`;
-
-        return {
-            content: [
-                {
-                    type: "text",
-                    text: ideasIntoText,
-                },
-            ],
-        };
-    }
-)
-
-mcpServer.tool(
-    "get_members",
-    "Get all members information",
-    async () => {
-        const members = await apiClient.get<User[]>("/a/rest/v1/members");
-
-        if (!members) {
-            return {
-                content: [
-                    {
-                        type: "text",
-                        text: "Failed to retrieve data.",
-                    },
-                ],
-            };
-        }
-
-        if (members.length === 0) {
-            return {
-                content: [
-                    {
-                        type: "text",
-                        text: "No members found.",
-                    },
-                ],
-            };
-        }
-
-        const formattedMembers = members.map(formatMember);
-        const membersIntoText = `Members from the response:\n\n${formattedMembers.join("\n")}`;
-
-        return {
-            content: [
-                {
-                    type: "text",
-                    text: membersIntoText,
-                },
-            ],
-        };
-    }
-)
-
-export {mcpServer};
+    return mcpServer;
+}

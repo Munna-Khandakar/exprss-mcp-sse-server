@@ -1,8 +1,8 @@
-import type {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import {SSEServerTransport} from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
+import {createMcpServer} from "./mcp-server.js";
 
-export function createSSEServer(mcpServer: McpServer) {
+export function createSSEServer() {
 
     const app = express();
 
@@ -20,8 +20,8 @@ export function createSSEServer(mcpServer: McpServer) {
             res.status(400).json({error: 'Missing WORKSPACE_URL or API_TOKEN'});
             return;
         }
-        console.log({workspaceUrl, apiToken});
         transportMap.set(transport.sessionId, transport);
+        const mcpServer = createMcpServer(workspaceUrl, apiToken);
         await mcpServer.connect(transport);
     });
 
