@@ -5,15 +5,15 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "mcp-server": "../../../../build/index.js"
+    "mcp-server": "./build/index.js"
   },
   "scripts": {
     "start": "node --loader ts-node/esm src/index.ts",
-    "dev": "../../../../node_modules/.bin/concurrently \"npx @modelcontextprotocol/inspector\" \"npm start\"",
-    "build": "../../../../node_modules/.bin/tsc && chmod 755 build/index.js"
+    "dev": "./node_modules/.bin/concurrently \"npx @modelcontextprotocol/inspector\" \"npm start\"",
+    "build": "./node_modules/.bin/tsc && chmod 755 build/index.js"
   },
   "files": [
-    "../../../../build"
+    "build"
   ],
   "keywords": [],
   "author": "",
