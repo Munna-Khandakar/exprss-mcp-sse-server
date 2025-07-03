@@ -1,2 +1,4 @@
 .env
 /node_modules
+/app/src/main/node/build/
+/app/src/main/node/node_modules/
