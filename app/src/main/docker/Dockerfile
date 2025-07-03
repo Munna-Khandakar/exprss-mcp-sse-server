@@ -56,7 +56,7 @@ RUN npm install
 RUN npm run build
 
 # Expose application port (update if needed)
-EXPOSE 3000
+EXPOSE 3001
 
 # Set environment variable (optional)
 ENV NODE_ENV=production
