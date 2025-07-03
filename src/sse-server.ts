@@ -10,7 +10,17 @@ export function createSSEServer(mcpServer: McpServer) {
 
     app.get("/sse", async (req, res) => {
         const transport = new SSEServerTransport("/messages", res);
-        console.log("=====Raw Headers====", req.originalUrl);
+
+        const queryString = req.originalUrl.split('?')[1];
+        const params = new URLSearchParams(queryString);
+        const workspaceUrl = params.get('WORKSPACE_URL');
+        const apiToken = params.get('API_TOKEN');
+
+        if (!workspaceUrl || !apiToken) {
+            res.status(400).json({error: 'Missing WORKSPACE_URL or API_TOKEN'});
+            return;
+        }
+        console.log({workspaceUrl, apiToken});
         transportMap.set(transport.sessionId, transport);
         await mcpServer.connect(transport);
     });

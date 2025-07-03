@@ -11,33 +11,6 @@ const mcpServer = new McpServer({
     capabilities: {},
 });
 
-mcpServer.resource(
-    'document',
-    new ResourceTemplate("document://{name}", {
-        list: async () => {
-            return {
-                resources: [
-                    {
-                        name: 'document-getting-started',
-                        uri: 'document://getting-started',
-                    }
-                ]
-            }
-        }
-    }),
-    async (uri, variables) => {
-        return {
-            contents: [
-                {
-                    uri: uri.href,
-                    text: 'Getting Started',
-                    mimeType: 'text/plain'
-                }
-            ]
-        }
-    }
-);
-
 mcpServer.tool(
     "get_ideas",
     "Get Ideas from the IdeaScale",
