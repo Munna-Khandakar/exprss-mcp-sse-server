@@ -5,7 +5,7 @@ import express from "express";
 export function createSSEServer(mcpServer: McpServer) {
 
     const app = express();
-
+console.log("App created for SSE server");
     const transportMap = new Map<string, SSEServerTransport>();
 
     app.get("/sse", async (req, res) => {
