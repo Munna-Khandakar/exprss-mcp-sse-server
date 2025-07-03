@@ -8,6 +8,9 @@ type RequestOptions = {
     body?: any;
 };
 
+const WORKSPACE_URL = "https://ideas.ideascale.com"
+const API_TOKEN = ""
+
 export class ApiClient {
     private defaultHeaders: Record<string, string>;
 
@@ -63,10 +66,4 @@ export class ApiClient {
     }
 }
 
-if (!process.env.WORKSPACE_URL) {
-    throw new Error("WORKSPACE_URL environment variable is not set");
-}
-if (!process.env.API_TOKEN) {
-    throw new Error("API_TOKEN environment variable is not set");
-}
-export const apiClient = new ApiClient(process.env.WORKSPACE_URL, process.env.API_TOKEN);
+export const apiClient = new ApiClient(WORKSPACE_URL, API_TOKEN);
